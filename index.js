@@ -103,7 +103,13 @@ app.post('/api/persons',(request,response) =>{
   response.json(newPerson)
   })
 
-
+  app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    persons = persons.filter(note => note.id !== id)
+  
+    response.status(204).end()
+  })
+  
   
 const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
