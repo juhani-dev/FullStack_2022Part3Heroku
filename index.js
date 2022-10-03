@@ -1,9 +1,13 @@
+require('dotenv').config()
 const { request, response } = require('express')
+
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
 
+const Person = require('./models/person')
 const cors = require('cors')
+
 app.use(express.static('build'))
 app.use(cors())
 
@@ -41,20 +45,17 @@ app.get('/',(request,response) =>{
   })
 
 app.get('/api/persons',(request,response) =>{
-response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
+
+  
 })
 app.get('/api/persons/:id',(request,response) => {
-
-  const id =Number(request.params.id)
-  
-  const person = persons.find(line => line.id ===id)
-
-  if (person){
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  }
-  else{
-    response.status(404).end()
-  }
+  })
+  
 }
 )
 
@@ -92,26 +93,38 @@ app.post('/api/persons',(request,response) =>{
     })
 
   }
-
-  const newPerson={
-    id: createNewId(),
+  const newPerson = new Person({
     name: body.name,
     number: body.number
-    }
-  persons = persons.concat(newPerson)
-
-  response.json(newPerson)
+  })
+  
+  newPerson.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+  
   })
 
   app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(note => note.id !== id)
-  
-    response.status(204).end()
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
   })
   
-  
-const PORT = process.env.PORT || 3001
+  app.put('/api/persons/:id',(request,response)=>{
+    const body =request.body
+    const person ={
+      name: body.name,
+      number: body.number
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person)
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    
+  })
+  const PORT = process.env.PORT
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-})
+  })
