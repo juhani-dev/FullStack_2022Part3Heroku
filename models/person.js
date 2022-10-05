@@ -1,9 +1,7 @@
-
 const mongoose = require('mongoose')
 const url = process.env.MONGODB_URI
-
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -11,21 +9,20 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-    name:{
-        type: String,
-        required: true,
-        minlength:4},
+  name:{
+    type: String,
+    required: true,
+    minlength:4 },
 
-    number: {
-        minlength:9,
-        type: String ,
-
-        validate: {
-            validator: function(v) {
-                return /\b\d{2,3}\b-\d{5,6}/.test(v);
-            },message: "Then numbers form is invalid."
-        },
-    }
+  number: {
+    minlength:9,
+    type: String ,
+    validate: {
+      validator: function(v) {
+        return /\b\d{2,3}\b-\d{5,6}/.test(v)
+      },message: 'Then numbers form is invalid'
+    },
+  }
 })
 
 personSchema.set('toJSON', {

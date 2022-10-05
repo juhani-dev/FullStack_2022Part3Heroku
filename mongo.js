@@ -10,25 +10,23 @@ const name = process.argv[3]
 const number = process.argv[4]
 const url = `mongodb+srv://juhanpg:${password}@cluster0.sgjnp6g.mongodb.net/?retryWrites=true&w=majority`
 const personSchema = new mongoose.Schema({
-    name: Object,
-    number: Object,
-    
-  })
-  const Person = mongoose.model('Person', personSchema)
-  if (name){
-  
-  
+  name: Object,
+  number: Object,
+
+})
+const Person = mongoose.model('Person', personSchema)
+if (name){
+
   mongoose
     .connect(url)
-    .then((result) => {
+    .then(() => {
       console.log('connected')
-  
+
       const person = new Person({
         name: `${name}`,
         number: `${number}`
-        
       })
-  
+
       return person.save()
     })
     .then(() => {
@@ -38,9 +36,9 @@ const personSchema = new mongoose.Schema({
 
     .catch((err) => console.log(err))
 } else {
-    mongoose
+  mongoose
     .connect(url)
-    Person.find({}).then(result => {
+  Person.find({}).then(result => {
     result.forEach(note => {
       console.log(note)
     })
